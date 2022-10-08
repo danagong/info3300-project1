@@ -4,10 +4,126 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    Dana Gong
+    <title>Project 1</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+          
+    .gridlines line {
+      stroke: #bbb;
+    }
+
+    .gridlines .domain {
+      stroke: none;
+    }
+    </style>
 </head>
 <body>
+    <svg id='scatter' height=500 width=800 ></svg>
+
+    
+
+    <script>
+
+      // Do the usual things to set up the chart area and incorporate margins
+    const svg = d3.select("svg#scatter");
+
+    const width = svg.attr("width");
+    const height = svg.attr("height");
+    const margin = {top: 10, right: 10, bottom: 60, left: 60};
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+
+    let annotations = svg.append("g").attr("id","annotations");
+    let chartArea = svg.append("g").attr("id","points")
+        .attr("transform",`translate(${margin.left},${margin.top})`);
+            
+                  
+          // Import some CSV data
+     d3.csv("final_na.csv", d3.autoType)
+    .then( (data) => {
+        console.log(data);
+
+        const hfiExtent = d3.extent(data, d => d['hf_score']);
+        const hfiScale = d3.scaleLinear().domain(hfiExtent).range([0, chartWidth]);
+
+        const giiExtent = d3.extent(data, d => d['2015_gii']);
+        const giiScale = d3.scaleLinear().domain(giiExtent).range([chartHeight, 0]);
+
+
+
+        let color = d3
+            .scaleOrdinal()
+            .domain([
+                        'Eastern Europe', 'Oceania' ,'Western Europe', 'South Asia',
+            'Sub-Saharan Africa' ,'Latin America & the Caribbean', 'North America',
+            'East Asia' ,'Caucasus & Central Asia' ,'Middle East & North Africa'
+            ])
+            .range(d3.schemeCategory10)
+
+            let leftAxis = d3.axisLeft(giiScale)
+            let leftGridlines = d3.axisLeft(giiScale)
+                                    .tickSize(-chartWidth-10)
+                                    .tickFormat("")
+            annotations.append("g")
+                .attr("class", "y axis")
+                .attr("transform",`translate(${margin.left-10},${margin.top})`)
+                .call(leftAxis)
+            annotations.append("g")
+                .attr("class", "y gridlines")
+                .attr("transform",`translate(${margin.left-10},${margin.top})`)
+                .call(leftGridlines);
+
+            //y-axis label:
+            svg.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 20)
+                .attr("x", 0 - height / 2)
+                .style("text-anchor", "middle")
+                .text("Human Freedom Index");
+            
+            let bottomAxis = d3.axisBottom(hfiScale)
+            let bottomGridlines = d3.axisBottom(hfiScale)
+                                    .tickSize(-chartHeight-10)
+                                    .tickFormat("")
+            annotations.append("g")
+                .attr("class", "x axis")
+                .attr("transform",`translate(${margin.left},${chartHeight+margin.top+10})`)
+                .call(bottomAxis);
+            annotations.append("g")
+                .attr("class", "x gridlines")
+                .attr("transform",`translate(${margin.left},${chartHeight+margin.top+10})`)
+                .call(bottomGridlines);
+
+            //x-axis label:
+            chartArea.append("text")
+                .attr("transform","translate(" + width / 2 + " ," + (height-20) + ")")
+                .style("text-anchor", "middle")
+                .text("Gender Inequality Index");
+                
+// JOIN data to elements.
+let circles = chartArea
+                 .selectAll("circle")
+                 .data(data, function(d){
+                                       return d["country"];
+                                        });
+// ENTER new elements present in new data.
+circles
+    .enter()
+    .append("circle")
+    .attr("fill", function (d) {
+      return color(d["region"]);
+    })
+    .attr("cy", function (d) {
+      return giiScale(d["2015_gii"]);
+    })
+    .attr("cx", function (d) {
+      return hfiScale(d["hf_score"]);
+    })
+    .attr("r", 5);
+
+
+    });  
+    </script>
     
 </body>
 </html>

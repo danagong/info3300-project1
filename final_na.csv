@@ -1,4 +1,4 @@
-country,ISO_code,region,hf_score,hf_rank,ef_score,ef_rank,pf_score,pf_rank,pf_rol_criminal,missing_women,womens_security,womens_movement,hdi_rank,2015_hdi,2021_pop
+country,ISO_code,region,hf_score,hf_rank,ef_score,ef_rank,pf_score,pf_rank,pf_rol_criminal,missing_women,womens_security,womens_movement,hdi_rank,2015_gii,2021_pop
 Albania,ALB,Eastern Europe,7.568140288,48.0,7.54,34.0,7.596280576,57.0,4.666508223,7.5,7.5,5.0,75,0.267,2811666.0
 Australia,AUS,Oceania,8.582219227,4.0,7.98,10.0,9.184438453,11.0,7.364078306,10.0,10.0,10.0,2,0.12,25739256.0
 Austria,AUT,Western Europe,8.4134742,16.0,7.58,27.0,9.246948401,8.0,7.673226526,10.0,10.0,10.0,24,0.078,8956279.0
