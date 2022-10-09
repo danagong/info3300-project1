@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project 1</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Aldrich|Arima+Madurai|Open Sans|Libre+Baskerville|Pirata+One|Poiret+One|Sancreek|Satisfy|Share+Tech+Mono|Smokum|Snowburst+One|Special+Elite" rel="stylesheet">
     <style>
           
     .gridlines line {
@@ -29,7 +30,7 @@
 
     const width = svg.attr("width");
     const height = svg.attr("height");
-    const margin = {top: 10, right: 10, bottom: 60, left: 70};
+    const margin = {top: 10, right: 30, bottom: 60, left: 70};
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
 
@@ -88,7 +89,8 @@
             .attr("y", 20)
             .attr("x", 0 - height / 2)
             .style("text-anchor", "middle")
-            .text("Human Freedom Index");
+            .text("Gender Inequality Index")
+            .attr("font-family", "Open Sans");
         
         let bottomAxis = d3.axisBottom(hfiScale)
         let bottomGridlines = d3.axisBottom(hfiScale)
@@ -107,7 +109,8 @@
         chartArea.append("text")
             .attr("transform","translate(" + width / 2 + " ," + (height-20) + ")")
             .style("text-anchor", "middle")
-            .text("Gender Inequality Index");
+            .text("Human Freedom Index")
+            .attr("font-family", "Open Sans");
             
         // JOIN data to elements.
         let circles = chartArea
@@ -133,7 +136,57 @@
             })
             .attr('opacity', .7);
 
+        // annotations for largest and smallest human freedom index
+
+        smallest = d3.min(data, function(d) {return d['hf_score'] })
+        
+        console.log(smallest)
+
+        chartArea.append('line')
+                .style("stroke", '#fb9a99')
+                .style("stroke-width", 1)
+                .attr('opacity', .7)
+                .attr("x1", hfiScale(smallest))
+                .attr("y1", giiScale(0.499)-16)
+                .attr("x2", hfiScale(smallest))
+                .attr("y2", 30); 
+
+        chartArea.append("text")
+            .attr("x",hfiScale(smallest))
+            .attr("y", 20)
+            .style("text-anchor", "middle")
+            .style('fill' ,'#fb9a99')
+            .text("Ethiopia")
+            .attr("font-family", "Open Sans")
+            .style("font-size", "12px");
+        
+        
+        largest = d3.max(data, function(d) {return d['hf_score'] })
+        
+        console.log(largest)
+
+        chartArea.append('line')
+                .style("stroke", '#1f78b4')
+                .style("stroke-width", 1)
+                .attr('opacity', .7)
+                .attr("x1", hfiScale(largest))
+                .attr("y1", giiScale(0.158)-7)
+                .attr("x2", hfiScale(largest))
+                .attr("y2", 270); 
+
+        chartArea.append("text")
+            .attr("x",hfiScale(largest)-10)
+            .attr("y", 260)
+            .style("text-anchor", "middle")
+            .style('fill' ,'#1f78b4')
+            .text("New Zealand")
+            .attr("font-family", "Open Sans")
+            .style("font-size", "12px");
+        
+
+
     });  
+     
     </script>
     
 </body>
