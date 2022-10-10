@@ -15,17 +15,23 @@
 
     .gridlines .domain {
       stroke: none;
+
     }
+    body{
+        background-color: #fffbf5;
+    }
+
     </style>
 </head>
 <body>
     <svg id='scatter' height=500 width=800 ></svg>
 
+    <svg id='density1' height=300 width=350 ></svg>
     
 
     <script>
 
-      // Do the usual things to set up the chart area and incorporate margins
+    // scatterplot
     const svg = d3.select("svg#scatter");
 
     const width = svg.attr("width");
@@ -38,12 +44,29 @@
     let chartArea = svg.append("g").attr("id","points")
         .attr("transform",`translate(${margin.left},${margin.top})`);
             
-                  
-          // Import some CSV data
+    
+           // scatterplot
+    const svg2 = d3.select("svg#density1");
+
+    const width2 = svg2.attr("width");
+    const height2 = svg2.attr("height");
+    const margin2 = {top: 60, right: 30, bottom: 120, left: 70};
+    const chartWidth2 = width2 - margin2.left - margin2.right;
+    const chartHeight2 = height2 - margin2.top - margin2.bottom;
+
+    let annotations2 = svg2.append("g").attr("id","annotations");
+    let chartArea2 = svg2.append("g").attr("id","points")
+        .attr("transform",`translate(${margin2.left},${margin2.top})`);
+        
+         
+        
+
+
      d3.csv("final_na.csv", d3.autoType)
     .then( (data) => {
         console.log(data);
 
+        // scatterplot 
         const hfiExtent = d3.extent(data, d => d['hf_score']);
         const hfiScale = d3.scaleLinear().domain(hfiExtent).range([0, chartWidth]);
 
@@ -106,9 +129,10 @@
             .call(bottomGridlines);
 
             //x-axis label:
-        chartArea.append("text")
+        svg.append("text")
             .attr("transform","translate(" + width / 2 + " ," + (height-20) + ")")
             .style("text-anchor", "middle")
+            .style("fill", "black")
             .text("Human Freedom Index")
             .attr("font-family", "Open Sans");
             
@@ -193,11 +217,64 @@
             .text("Gender Inequality Index vs Human Freedom Index")
             .attr("font-family", "Open Sans")
             .style("font-size", "20px");
-        
 
+
+    
 
     });  
      
+    d3.csv("security_region.csv", d3.autoType)
+    .then( (data) => {
+
+        let color = d3
+            .scaleOrdinal()
+            .domain([
+                        'Eastern Europe', 'Oceania' ,'Western Europe', 'South Asia',
+            'Sub-Saharan Africa' ,'Latin America & the Caribbean', 'North America',
+            'East Asia' ,'Caucasus & Central Asia' ,'Middle East & North Africa'
+            ])
+            .range(d3.schemePaired)
+// X axis
+var x = d3.scaleBand()
+  .range([ 0, chartWidth2 ])
+  .domain(data.map(function(d) { return d.region; }))
+  .padding(0.2);
+chartArea2.append("g")
+  .attr("transform", "translate(0," + chartHeight2 + ")")
+  .call(d3.axisBottom(x))
+  .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end");
+
+//x-axis label:
+          svg2.append("text")
+            .attr("transform","translate(" + width2/1.8 + " ," + (height2-260) + ")")
+            .style("text-anchor", "middle")
+            .style("fill", "black")
+            .text("Womens Security Score by Region")
+            .attr("font-family", "Open Sans");
+
+// Add Y axis
+const securityExtent = d3.extent(data, d =>d['womens_security']);
+var y = d3.scaleLinear()
+  .domain(securityExtent)
+  .range([ chartHeight2, 0]);
+chartArea2.append("g")
+  .call(d3.axisLeft(y));
+
+// Bars
+chartArea2.selectAll("mybar")
+  .data(data)
+  .enter()
+  .append("rect")
+    .attr("x", function(d) { return x(d.region); })
+    .attr("y", function(d) { return y(d.womens_security); })
+    .attr("width", x.bandwidth())
+    .attr("height", function(d) { return chartHeight2 - y(d.womens_security); })
+    .attr("fill", function(d) { return color(d.region); })
+
+
+    });  
     </script>
     
 </body>
