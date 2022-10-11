@@ -23,10 +23,17 @@
         body {
             background-color: #fffbf5;
         }
+
+        .title{
+            text-align: center;
+            font-family: "Open Sans";
+        }
     </style>
 </head>
 
 <body>
+
+    <h3 class = "title"> Project 1: Visualizing Human Freedom Index Variables</h3>
     <svg id='scatter' height=500 width=1000></svg>
     <svg id='bar' height=400 width=1400></svg>
 
@@ -315,7 +322,7 @@
 
                 // ee axis
                 var eeScale = d3.scaleBand()
-                    .range([ 300,460 ])
+                    .range([ 300,480 ])
                     .domain(eeFilter.map(function(d) { return d.country; }))
                     .padding(0.2);
 
@@ -326,21 +333,23 @@
 
                 // ea axis
                 var eaScale = d3.scaleBand()
-                    .range([460,540])
+                    .range([480,560])
                     .domain(eaFilter.map(function(d) { return d.country; }))
                     .padding(0.2);
 
-                // sa axis
-                var saScale = d3.scaleBand()
-                    .range([540,740])
-                    .domain(saFilter.map(function(d) { return d.country; }))
-                    .padding(0.2);
+
 
                 
                 // la axis
                 var laScale = d3.scaleBand()
-                    .range([740,980])
+                    .range([560,800])
                     .domain(laFilter.map(function(d) { return d.country; }))
+                    .padding(0.2);
+
+                // sa axis
+                var saScale = d3.scaleBand()
+                    .range([800,980])
+                    .domain(saFilter.map(function(d) { return d.country; }))
                     .padding(0.2);
 
                  // ssa axis
