@@ -27,7 +27,7 @@
 </head>
 
 <body>
-    <svg id='scatter' height=500 width=800></svg>
+    <svg id='scatter' height=600 width=800></svg>
 
 
 
@@ -38,7 +38,7 @@
 
         const width = svg.attr("width");
         const height = svg.attr("height");
-        const margin = { top: 10, right: 30, bottom: 60, left: 70 };
+        const margin = { top: 40, right: 30, bottom: 60, left: 70 };
         const chartWidth = width - margin.left - margin.right;
         const chartHeight = height - margin.top - margin.bottom;
 
@@ -149,14 +149,14 @@
 
                 //x-axis label:
                 chartArea.append("text")
-                    .attr("transform", "translate(" + width / 2 + " ," + 10 + ")")
+                    .attr("transform", "translate(" + width / 2 + " ," + -20 + ")")
                     .style("text-anchor", "middle")
                     .text("Gender Inequality Index vs. Human Freedom")
                     .attr("font-family", "Open Sans");
 
                 //x-axis label:
                 chartArea.append("text")
-                    .attr("transform", "translate(" + width / 2 + " ," + (height - 20) + ")")
+                    .attr("transform", "translate(" + width / 2 + " ," + (height - 40) + ")")
                     .style("text-anchor", "middle")
                     .text("Human Freedom Index")
                     .attr("font-family", "Open Sans");
