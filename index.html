@@ -1,193 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project 1</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Aldrich|Arima+Madurai|Open Sans|Libre+Baskerville|Pirata+One|Poiret+One|Sancreek|Satisfy|Share+Tech+Mono|Smokum|Snowburst+One|Special+Elite" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Aldrich|Arima+Madurai|Open Sans|Libre+Baskerville|Pirata+One|Poiret+One|Sancreek|Satisfy|Share+Tech+Mono|Smokum|Snowburst+One|Special+Elite"
+        rel="stylesheet">
     <style>
-          
-    .gridlines line {
-      stroke: #bbb;
-    }
+        .gridlines line {
+            stroke: #bbb;
+        }
 
-    .gridlines .domain {
-      stroke: none;
-    }
+        .gridlines .domain {
+            stroke: none;
+        }
     </style>
 </head>
-<body>
-    <svg id='scatter' height=500 width=800 ></svg>
 
-    
+<body>
+    <svg id='scatter' height=500 width=800></svg>
+
+
 
     <script>
 
-      // Do the usual things to set up the chart area and incorporate margins
-    const svg = d3.select("svg#scatter");
+        // Do the usual things to set up the chart area and incorporate margins
+        const svg = d3.select("svg#scatter");
 
-    const width = svg.attr("width");
-    const height = svg.attr("height");
-    const margin = {top: 10, right: 30, bottom: 60, left: 70};
-    const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
+        const width = svg.attr("width");
+        const height = svg.attr("height");
+        const margin = { top: 10, right: 30, bottom: 60, left: 70 };
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
 
-    let annotations = svg.append("g").attr("id","annotations");
-    let chartArea = svg.append("g").attr("id","points")
-        .attr("transform",`translate(${margin.left},${margin.top})`);
-            
-                  
-          // Import some CSV data
-     d3.csv("final_na.csv", d3.autoType)
-    .then( (data) => {
-        console.log(data);
+        let annotations = svg.append("g").attr("id", "annotations");
+        let chartArea = svg.append("g").attr("id", "points")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        const hfiExtent = d3.extent(data, d => d['hf_score']);
-        const hfiScale = d3.scaleLinear().domain(hfiExtent).range([0, chartWidth]);
 
-        const giiExtent = d3.extent(data, d => d['2015_gii']);
-        const giiScale = d3.scaleLinear().domain(giiExtent).range([chartHeight, 0]);
+        // Import some CSV data
+        d3.csv("final_na.csv", d3.autoType)
+            .then((data) => {
+                console.log(data);
 
-        //data.forEach( d => {
-                    //d['pop_scale'] = Math.sqrt(d['2021_pop']);
-                
+                const hfiExtent = d3.extent(data, d => d['hf_score']);
+                const hfiScale = d3.scaleLinear().domain(hfiExtent).range([0, chartWidth]);
+
+                const giiExtent = d3.extent(data, d => d['2015_gii']);
+                const giiScale = d3.scaleLinear().domain(giiExtent).range([chartHeight, 0]);
+
+                //data.forEach( d => {
+                //d['pop_scale'] = Math.sqrt(d['2021_pop']);
+
                 // });
 
-      
-        const popExtent = d3.extent(data, d =>d['2021_pop']);
-        let popScale = d3.scaleLog().domain(popExtent).range([0,20]);
+
+                const popExtent = d3.extent(data, d => d['2021_pop']);
+                let popScale = d3.scaleLog().domain(popExtent).range([0, 20]);
 
 
-        let color = d3
-            .scaleOrdinal()
-            .domain([
-                        'Eastern Europe', 'Oceania' ,'Western Europe', 'South Asia',
-            'Sub-Saharan Africa' ,'Latin America & the Caribbean', 'North America',
-            'East Asia' ,'Caucasus & Central Asia' ,'Middle East & North Africa'
-            ])
-            .range(d3.schemePaired)
+                const regions = [
+                    'Eastern Europe', 'Oceania', 'Western Europe', 'South Asia',
+                    'Sub-Saharan Africa', 'Latin America & the Caribbean', 'North America',
+                    'East Asia', 'Caucasus & Central Asia', 'Middle East & North Africa'
+                ]
+
+                let color = d3
+                    .scaleOrdinal()
+                    .domain(regions)
+                    .range(d3.schemePaired)
 
 
-        let leftAxis = d3.axisLeft(giiScale)
-        let leftGridlines = d3.axisLeft(giiScale)
-                                .tickSize(-chartWidth-10)
-                                .tickFormat("")
-        annotations.append("g")
-            .attr("class", "y axis")
-            .attr("transform",`translate(${margin.left-10},${margin.top})`)
-            .call(leftAxis)
-        annotations.append("g")
-            .attr("class", "y gridlines")
-            .attr("transform",`translate(${margin.left-10},${margin.top})`)
-            .call(leftGridlines);
+                let leftAxis = d3.axisLeft(giiScale)
+                let leftGridlines = d3.axisLeft(giiScale)
+                    .tickSize(-chartWidth - 10)
+                    .tickFormat("")
+                annotations.append("g")
+                    .attr("class", "y axis")
+                    .attr("transform", `translate(${margin.left - 10},${margin.top})`)
+                    .call(leftAxis)
+                annotations.append("g")
+                    .attr("class", "y gridlines")
+                    .attr("transform", `translate(${margin.left - 10},${margin.top})`)
+                    .call(leftGridlines);
 
-        //y-axis label:
-        svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 20)
-            .attr("x", 0 - height / 2)
-            .style("text-anchor", "middle")
-            .text("Gender Inequality Index")
-            .attr("font-family", "Open Sans");
-        
-        let bottomAxis = d3.axisBottom(hfiScale)
-        let bottomGridlines = d3.axisBottom(hfiScale)
-                                .tickSize(-chartHeight-10)
-                                .tickFormat("")
-        annotations.append("g")
-            .attr("class", "x axis")
-            .attr("transform",`translate(${margin.left},${chartHeight+margin.top+10})`)
-            .call(bottomAxis);
-        annotations.append("g")
-            .attr("class", "x gridlines")
-            .attr("transform",`translate(${margin.left},${chartHeight+margin.top+10})`)
-            .call(bottomGridlines);
-
-            //x-axis label:
-        chartArea.append("text")
-            .attr("transform","translate(" + width / 2 + " ," + (height-20) + ")")
-            .style("text-anchor", "middle")
-            .text("Human Freedom Index")
-            .attr("font-family", "Open Sans");
-            
-        // JOIN data to elements.
-        let circles = chartArea
-                        .selectAll("circle")
-                        .data(data, function(d){
-                                            return d["country"];
-                                                });
-        // ENTER new elements present in new data.
-        circles
-            .enter()
-            .append("circle")
-            .attr("fill", function (d) {
-            return color(d["region"]);
-            })
-            .attr("cy", function (d) {
-            return giiScale(d["2015_gii"]);
-            })
-            .attr("cx", function (d) {
-            return hfiScale(d["hf_score"]);
-            })
-            .attr("r", function(d){
-                return popScale(d["2021_pop"])
-            })
-            .attr('opacity', .7);
-
-        // annotations for largest and smallest human freedom index
-
-        smallest = d3.min(data, function(d) {return d['hf_score'] })
-        
-        console.log(smallest)
-
-        chartArea.append('line')
-                .style("stroke", '#fb9a99')
-                .style("stroke-width", 1)
-                .attr('opacity', .7)
-                .attr("x1", hfiScale(smallest))
-                .attr("y1", giiScale(0.499)-16)
-                .attr("x2", hfiScale(smallest))
-                .attr("y2", 30); 
-
-        chartArea.append("text")
-            .attr("x",hfiScale(smallest))
-            .attr("y", 20)
-            .style("text-anchor", "middle")
-            .style('fill' ,'#fb9a99')
-            .text("Ethiopia")
-            .attr("font-family", "Open Sans")
-            .style("font-size", "12px");
-        
-        
-        largest = d3.max(data, function(d) {return d['hf_score'] })
-        
-        console.log(largest)
-
-        chartArea.append('line')
-                .style("stroke", '#1f78b4')
-                .style("stroke-width", 1)
-                .attr('opacity', .7)
-                .attr("x1", hfiScale(largest))
-                .attr("y1", giiScale(0.158)-7)
-                .attr("x2", hfiScale(largest))
-                .attr("y2", 270); 
-
-        chartArea.append("text")
-            .attr("x",hfiScale(largest)-10)
-            .attr("y", 260)
-            .style("text-anchor", "middle")
-            .style('fill' ,'#1f78b4')
-            .text("New Zealand")
-            .attr("font-family", "Open Sans")
-            .style("font-size", "12px");
-        
+                const LEGEND_CIRCLE_SIZE = 6;
+                const LEGEND_FONT_SIZE = 8;
+                const LEGEND_X_ALIGN = svg.attr("width") - 150;
+                const LEGEND_X_GAP = 10;
+                const LEGEND_Y_ALIGN = 25;
+                const LEGEND_Y_GAP = 20;
 
 
-    });  
-     
+                svg.selectAll("legendcolors")
+                    .data(regions)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", LEGEND_X_ALIGN)
+                    .attr("cy", (d, i) => LEGEND_Y_ALIGN + i * LEGEND_Y_GAP)
+                    .attr("r", LEGEND_CIRCLE_SIZE)
+                    .attr("font-family", "Open Sans")
+                    .attr("font-size", LEGEND_FONT_SIZE)
+                    .style("fill", (d) => color(d))
+
+                svg.selectAll("legendtext")
+                    .data(regions)
+                    .enter()
+                    .append("text")
+                    .attr("x", LEGEND_X_ALIGN + LEGEND_X_GAP)
+                    .attr("y", (d, i) => LEGEND_Y_ALIGN + i * LEGEND_Y_GAP)
+                    .style("fill", (d) => color(d))
+                    .text(d => d)
+                    .attr("text-anchor", "left")
+                    .attr("font-family", "Open Sans")
+                    .attr("font-size", LEGEND_FONT_SIZE)
+                    .style("alignment-baseline", "middle")
+
+                //y-axis label:
+                svg.append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 20)
+                    .attr("x", 0 - height / 2)
+                    .style("text-anchor", "middle")
+                    .text("Gender Inequality Index")
+                    .attr("font-family", "Open Sans");
+
+                let bottomAxis = d3.axisBottom(hfiScale)
+                let bottomGridlines = d3.axisBottom(hfiScale)
+                    .tickSize(-chartHeight - 10)
+                    .tickFormat("")
+                annotations.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
+                    .call(bottomAxis);
+                annotations.append("g")
+                    .attr("class", "x gridlines")
+                    .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
+                    .call(bottomGridlines);
+
+                //x-axis label:
+                chartArea.append("text")
+                    .attr("transform", "translate(" + width / 2 + " ," + 10 + ")")
+                    .style("text-anchor", "middle")
+                    .text("Gender Inequality Index vs. Human Freedom")
+                    .attr("font-family", "Open Sans");
+
+                //x-axis label:
+                chartArea.append("text")
+                    .attr("transform", "translate(" + width / 2 + " ," + (height - 20) + ")")
+                    .style("text-anchor", "middle")
+                    .text("Human Freedom Index")
+                    .attr("font-family", "Open Sans");
+
+                // JOIN data to elements.
+                let circles = chartArea
+                    .selectAll("circle")
+                    .data(data, function (d) {
+                        return d["country"];
+                    });
+                // ENTER new elements present in new data.
+                circles
+                    .enter()
+                    .append("circle")
+                    .attr("fill", function (d) {
+                        return color(d["region"]);
+                    })
+                    .attr("cy", function (d) {
+                        return giiScale(d["2015_gii"]);
+                    })
+                    .attr("cx", function (d) {
+                        return hfiScale(d["hf_score"]);
+                    })
+                    .attr("r", function (d) {
+                        return popScale(d["2021_pop"])
+                    })
+                    .attr('opacity', .7);
+
+                // annotations for largest and smallest human freedom index
+
+                smallest = d3.min(data, function (d) { return d['hf_score'] })
+
+                console.log(smallest)
+
+                chartArea.append('line')
+                    .style("stroke", '#fb9a99')
+                    .style("stroke-width", 1)
+                    .attr('opacity', .7)
+                    .attr("x1", hfiScale(smallest))
+                    .attr("y1", giiScale(0.499) - 16)
+                    .attr("x2", hfiScale(smallest))
+                    .attr("y2", 30);
+
+                chartArea.append("text")
+                    .attr("x", hfiScale(smallest))
+                    .attr("y", 20)
+                    .style("text-anchor", "middle")
+                    .style('fill', '#fb9a99')
+                    .text("Ethiopia")
+                    .attr("font-family", "Open Sans")
+                    .style("font-size", "12px");
+
+
+                largest = d3.max(data, function (d) { return d['hf_score'] })
+
+                console.log(largest)
+
+                chartArea.append('line')
+                    .style("stroke", '#1f78b4')
+                    .style("stroke-width", 1)
+                    .attr('opacity', .7)
+                    .attr("x1", hfiScale(largest))
+                    .attr("y1", giiScale(0.158) - 7)
+                    .attr("x2", hfiScale(largest))
+                    .attr("y2", 270);
+
+                chartArea.append("text")
+                    .attr("x", hfiScale(largest) - 10)
+                    .attr("y", 260)
+                    .style("text-anchor", "middle")
+                    .style('fill', '#1f78b4')
+                    .text("New Zealand")
+                    .attr("font-family", "Open Sans")
+                    .style("font-size", "12px");
+
+
+
+            });
+
+
+
     </script>
-    
+
 </body>
+
 </html>
