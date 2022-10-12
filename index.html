@@ -40,7 +40,7 @@
 
     <script>
 
-        // Do the usual things to set up the chart area and incorporate margins
+        // first scatterplot visualization
         const svg = d3.select("svg#scatter");
 
         const width = svg.attr("width");
@@ -54,6 +54,7 @@
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
 
+        // second bar chart visualization
         const svg2 = d3.select("svg#bar");
 
         const width2 = svg2.attr("width");
@@ -67,22 +68,24 @@
             .attr("transform", `translate(${margin2.left},${margin2.top})`);
 
 
-        // Import some CSV data
+        // import cleaned csv data
         d3.csv("final_na.csv", d3.autoType)
             .then((data) => {
                 console.log(data);
 
+                // code for first scatter plot
+
+                // x-axis scale
+
                 const hfiExtent = d3.extent(data, d => d['hf_score']);
                 const hfiScale = d3.scaleLinear().domain(hfiExtent).range([0, chartWidth]);
+
+                // y-xis scale
 
                 const giiExtent = d3.extent(data, d => d['2015_gii']);
                 const giiScale = d3.scaleLinear().domain(giiExtent).range([chartHeight, 0]);
 
-                //data.forEach( d => {
-                //d['pop_scale'] = Math.sqrt(d['2021_pop']);
-
-                // });
-
+                // population scale for size
 
                 const popExtent = d3.extent(data, d => d['2021_pop']);
                 let popScale = d3.scaleLog().domain(popExtent).range([0, 20]);
@@ -94,11 +97,14 @@
                     'East Asia', 'Caucasus & Central Asia', 'Middle East & North Africa'
                 ]
 
+                // color function for region
+
                 let color = d3
                     .scaleOrdinal()
                     .domain(regions)
                     .range(d3.schemePaired)
 
+                // left axis
 
                 let leftAxis = d3.axisLeft(giiScale)
                 let leftGridlines = d3.axisLeft(giiScale)
@@ -113,6 +119,7 @@
                     .attr("transform", `translate(${margin.left - 10},${margin.top})`)
                     .call(leftGridlines);
 
+                // create legend
                 const LEGEND_CIRCLE_SIZE = 6;
                 const LEGEND_FONT_SIZE = 8;
                 const LEGEND_X_ALIGN = svg.attr("width") - 150;
@@ -181,13 +188,13 @@
                     .text("Human Freedom Index")
                     .attr("font-family", "Open Sans");
 
-                // JOIN data to elements.
+                // circle for each country
                 let circles = chartArea
                     .selectAll("circle")
                     .data(data, function (d) {
                         return d["country"];
                     });
-                // ENTER new elements present in new data.
+                // create circles
                 circles
                     .enter()
                     .append("circle")
@@ -252,10 +259,9 @@
                     .attr("font-family", "Open Sans")
                     .style("font-size", "12px");
 
-                // grouped bar chart
-
-            
+                // code for second grouped bar chart
         
+                // y axis scale
                    
                 const securityExtent = d3.extent(data, d => d['womens_security']);
                 const securityScale = d3.scaleLinear().domain(securityExtent).range([chartHeight2, 0]);
@@ -300,6 +306,7 @@
                 caFilter = data.filter( function(d){return d.region === 'Caucasus & Central Asia'});
                 meFilter = data.filter( function(d){return d.region === "Middle East & North Africa"});
             
+                // create axis for each region using scaleBand
 
                  // na axis
                 var naScale = d3.scaleBand()
@@ -372,7 +379,7 @@
                     .padding(0.2);
                 
 
-                // Bars
+                // create bars for each country for each region
 
                 chartArea2.selectAll("mybar")
                 .data(naFilter)
